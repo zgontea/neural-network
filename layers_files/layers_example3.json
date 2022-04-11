@@ -1,0 +1,19 @@
+{
+    "layersCount": 2,
+    "layers": [
+        {
+            "neuronsCount": 1,
+            "inputsCount": 1,
+            "weights": [
+                0.1
+            ]
+        },
+        {
+            "neuronsCount": 1,
+            "inputsCount": 1,
+            "weights": [
+                0.3
+            ]
+        }
+    ]
+}

@@ -182,6 +182,14 @@ vector<vector<float>> NeuralNetwork::teachForSeries(int epoch, const vector<vect
     return output;
 }
 
+float relu(const float &value) {
+    if(value <= 0) {
+        return 0;
+    }
+
+    return 1;
+}
+
 int NeuralNetwork::getLayersCount() {
     return layers.size(); 
 }
@@ -193,7 +201,7 @@ int NeuralNetwork::getNeuronsCountByLayer(int layerNumber) {
 }
 
 
-float neuron(const vector<float> &input, const vector<float> &weights, float bias) {
+float NeuralNetwork::neuron(const vector<float> &input, const vector<float> &weights, float bias) {
     if(input.size() == 0 || weights.size() == 0 || input.size() != weights.size()) {
         return -1;
     }
@@ -202,13 +210,13 @@ float neuron(const vector<float> &input, const vector<float> &weights, float bia
     float result = bias;
 
     for(int x = 0; x < inputSize; x++) {
-        result += input[x] * weights[x];
+        result += activationFunctions(input[x] * weights[x]);
     }
 
     return result;
 }
 
-vector<float> neural_network(const vector<float> &input, const vector<vector<float>> &weights) {
+vector<float> NeuralNetwork::neural_network(const vector<float> &input, const vector<vector<float>> &weights) {
     vector<float> outputs;
 
     if(weights.size() == 0) {
@@ -251,7 +259,7 @@ vector<vector<float>> transpose_matrix(const vector<vector<float>> &matrix) {
     return transposed;
 }
 
-vector<float> deep_neural_network(const vector<float> &input, const vector<vector<vector<float>>> &weights_for_layers) {
+vector<float> NeuralNetwork::deep_neural_network(const vector<float> &input, const vector<vector<vector<float>>> &weights_for_layers) {
     vector<float> output = input;
     int layers_count = weights_for_layers.size();
 
