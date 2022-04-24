@@ -26,14 +26,14 @@ class NeuralNetwork {
         vector<float (*)(const float&)> activationFunctions;
 
         void addLayer(int n);
-        vector<float> predict(const vector<float> &input);
+        vector<float> predict(const vector<float> &input, const vector<float> &hiddenLayerOutput);
         void loadWeights(string fileName);
         int getLayersCount();
         int getNeuronsCountByLayer(int layerNumber);
         vector<float> teach(int epoch, const vector<float> &input, float learningRatio, const vector<float> &expectedOutput);
         vector<vector<float>> teachForSeries(int epoch, const vector<vector<float>> &input, float learningRatio, const vector<vector<float>> &expectedOutput);
         
-        float neuron(const vector<float> &input, const vector<float> &weights, float bias);
-        vector<float> neural_network(const vector<float> &input, const vector<vector<float>> &weights);
+        float neuron(const vector<float> &input, const vector<float> &weights, float bias, int layerNum);
+        vector<float> neural_network(const vector<float> &input, const vector<vector<float>> &weights, int layerNum);
         vector<float> deep_neural_network(const vector<float> &input, const vector<vector<vector<float>>> &weights_for_layers);
 };

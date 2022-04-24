@@ -46,7 +46,7 @@ void NeuralNetwork::addLayer(int n) {
     currentInputCount = n;
 }
 
-vector<float> NeuralNetwork::predict(const vector<float> &input) {
+vector<float> NeuralNetwork::predict(const vector<float> &input, const vector<float> &hiddenLayerOutput) {
     vector<float> output;
     if(getLayersCount() == 0) {
         return output;
@@ -148,7 +148,8 @@ vector<vector<float>> NeuralNetwork::teachForSeries(int epoch, const vector<vect
         float totalError = 0;
         for(int s = 0; s < (int)input.size(); s++) {
             float errorForSerie = 0;
-            vector<float> prediction = predict(input[s]);
+            vector<float> hiddenLayerOutput;
+            vector<float> prediction = predict(input[s], hiddenLayerOutput);
             vector<float> delta;
             delta.resize(prediction.size());
 
@@ -187,7 +188,7 @@ float relu(const float &value) {
         return 0;
     }
 
-    return 1;
+    return value;
 }
 
 int NeuralNetwork::getLayersCount() {
@@ -201,7 +202,7 @@ int NeuralNetwork::getNeuronsCountByLayer(int layerNumber) {
 }
 
 
-float NeuralNetwork::neuron(const vector<float> &input, const vector<float> &weights, float bias) {
+float NeuralNetwork::neuron(const vector<float> &input, const vector<float> &weights, float bias, int layerNum) {
     if(input.size() == 0 || weights.size() == 0 || input.size() != weights.size()) {
         return -1;
     }
@@ -210,13 +211,17 @@ float NeuralNetwork::neuron(const vector<float> &input, const vector<float> &wei
     float result = bias;
 
     for(int x = 0; x < inputSize; x++) {
-        result += activationFunctions(input[x] * weights[x]);
+        result += (input[x] * weights[x]);
+    }
+    
+    if(activationFunctions[layerNum]) {
+        result = activationFunctions[layerNum](result);
     }
 
     return result;
 }
 
-vector<float> NeuralNetwork::neural_network(const vector<float> &input, const vector<vector<float>> &weights) {
+vector<float> NeuralNetwork::neural_network(const vector<float> &input, const vector<vector<float>> &weights, int layerNum) {
     vector<float> outputs;
 
     if(weights.size() == 0) {
@@ -228,7 +233,7 @@ vector<float> NeuralNetwork::neural_network(const vector<float> &input, const ve
     }
 
     for(vector<float> weight : weights) {
-        outputs.push_back(neuron(input, weight, 0));
+        outputs.push_back(neuron(input, weight, 0, layerNum));
     }
 
     return outputs;
@@ -267,9 +272,13 @@ vector<float> NeuralNetwork::deep_neural_network(const vector<float> &input, con
         return output;
     }
     
+    int layerNum = 0;
+
     for(vector<vector<float>> layer : weights_for_layers) {
         vector<float> new_input = output;
-        output = neural_network(new_input, layer);
+        output = neural_network(new_input, layer, layerNum);
+
+        layerNum++;
     }
 
     return output;
