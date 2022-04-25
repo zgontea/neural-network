@@ -12,6 +12,10 @@ vector<vector<float>> transpose_matrix(const vector<vector<float>> &matrix);
 vector<vector<float>> outer_product(const vector<float> &v1, const vector<float> &v2);
 float relu(const float &value);
 
+vector<float> multiply_matrix(const vector<vector<float>> &weights, const vector<float> &delta);
+vector<float> multiply_matrix_deriv(const vector<float> &v1, const vector<float> &v2);
+float reluDeriv(const float &value);
+
 class NeuralNetwork {
 
     private:
@@ -26,7 +30,7 @@ class NeuralNetwork {
         vector<float (*)(const float&)> activationFunctions;
 
         void addLayer(int n);
-        vector<float> predict(const vector<float> &input, const vector<float> &hiddenLayerOutput);
+        vector<float> predict(const vector<float> &input, vector<vector<float>> &layersOutput);
         void loadWeights(string fileName);
         int getLayersCount();
         int getNeuronsCountByLayer(int layerNumber);
@@ -35,5 +39,5 @@ class NeuralNetwork {
         
         float neuron(const vector<float> &input, const vector<float> &weights, float bias, int layerNum);
         vector<float> neural_network(const vector<float> &input, const vector<vector<float>> &weights, int layerNum);
-        vector<float> deep_neural_network(const vector<float> &input, const vector<vector<vector<float>>> &weights_for_layers);
+        vector<float> deep_neural_network(const vector<float> &input, const vector<vector<vector<float>>> &weights_for_layers, vector<vector<float>> &layersOutput);
 };

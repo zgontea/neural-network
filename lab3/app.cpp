@@ -29,8 +29,10 @@ int main() {
 
     cout << "\nLab 3.4\n";
 
+    vector<vector<float>> layersOutput;
+
     for(vector<float> input : inputSeries) {
-        vector<float> output = network.predict(input);
+        vector<float> output = network.predict(input, layersOutput);
         for(float value : output) {
             cout << value << '\n';
         }
