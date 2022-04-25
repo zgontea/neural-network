@@ -32,6 +32,7 @@ class NeuralNetwork {
         void addLayer(int n);
         vector<float> predict(const vector<float> &input, vector<vector<float>> &layersOutput);
         void loadWeights(string fileName);
+        void fit(const vector<float> &input, const vector<float> &expectedOutput, float learningRatio);
         int getLayersCount();
         int getNeuronsCountByLayer(int layerNumber);
         vector<float> teach(int epoch, const vector<float> &input, float learningRatio, const vector<float> &expectedOutput);

@@ -50,5 +50,60 @@ int main() {
         cout << '\n';
     }
 
+    cout << "\nLab 3.6\n";
+
+    FILE *imagesTrain = fopen("../images/train-images.idx3-ubyte", "rb");
+    FILE *labelsTrain = fopen("../images/train-images.idx3-ubyte", "rb");
+
+    vector<vector<float>> inputImages;
+    inputImages.resize(60000);
+    for(int i = 0; i < 60000; i++) {
+        inputImages[i].resize(28 * 28);
+    }
+
+    vector<float> inputLabels;
+    inputLabels.resize(60000);
+
+    fseek(imagesTrain, 16, SEEK_SET);
+    fseek(labelsTrain, 8, SEEK_SET);
+
+    uint8_t byte;
+    for(int i = 0; i < 10; i++) {
+        fread(&byte, 1, 1, labelsTrain);
+        inputLabels[i] = byte;
+        for(int y = 0; y < 28; y++) {
+            for(int x = 0; x < 28; x++) {
+                fread(&byte, 1, 1, imagesTrain);
+                inputImages[i][(y + 1) * x] = byte / 255.0;
+                // cout << inputImages[i][(y + 1) * x] << ' ';
+            }
+            // cout << '\n';
+        }
+    }
+
+    NeuralNetwork neuralImage(784);
+    neuralImage.addLayer(40);
+    neuralImage.addLayer(10);
+
+    neuralImage.activationFunctions.push_back(relu);
+    neuralImage.activationFunctions.push_back(NULL);
+
+    vector<vector<float>> expectedImageOutput;
+    expectedImageOutput.resize(60000);
+    for(int i = 0; i < 10; i++) {
+        expectedImageOutput[i].resize(10);
+        for(int x = 0; x < 10; x++) {
+            expectedImageOutput[i][x] = 0;
+        }
+        cout << (int)inputLabels[i];
+        expectedImageOutput[i][inputLabels[i]] = 1;
+    }
+
+    // vector<vector<float>> imagesResult = neuralImage.teachForSeries(1, inputImages, 0.01, expectedImageOutput);
+
+    // for(int i = 0; i < 10; i++) {
+    //     cout << imagesResult[0][i] << '\n';
+    // }
+
     return EXIT_SUCCESS;
 }
