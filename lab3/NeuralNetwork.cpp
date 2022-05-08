@@ -33,22 +33,22 @@ void NeuralNetwork::addLayer(int n)
 
         for (int w = 0; w < currentInputCount; w++)
         {
-            layers[currentLayerIndex][i].push_back((rand() % 10 - 10) / (float)10);
+            layers[currentLayerIndex][i].push_back(-0.1 + static_cast<float>(rand()) * static_cast<float>(0.1 - (-0.1)) / RAND_MAX);
         }
     }
 
-    int inputNumber = 0;
+    // int inputNumber = 0;
     // cout << "Layer " << currentLayerIndex << ":\n";
-    for (vector<float> v : layers[currentLayerIndex])
-    {
-        // cout << "Weights for input " << inputNumber << ": ";
-        for (float value : v)
-        {
-            // cout << value << ' ';
-        }
-        // cout << '\n';
-        inputNumber++;
-    }
+    // for (vector<float> v : layers[currentLayerIndex])
+    // {
+    //     cout << "Weights for input " << inputNumber << ": ";
+    //     for (float value : v)
+    //     {
+    //         cout << value << ' ';
+    //     }
+    //     cout << '\n';
+    //     inputNumber++;
+    // }
 
     // cout << '\n';
 
@@ -99,18 +99,18 @@ void NeuralNetwork::loadWeights(string fileName)
             }
         }
 
-        int inputNumber = 0;
+        // int inputNumber = 0;
         // cout << "Layer " << layerIndex << ":\n";
-        for (vector<float> v : layers[layerIndex])
-        {
-            // cout << "Weights for input " << inputNumber << ": ";
-            for (float value : v)
-            {
-                cout << value << ' ';
-            }
-            cout << '\n';
-            inputNumber++;
-        }
+        // for (vector<float> v : layers[layerIndex])
+        // {
+        //     cout << "Weights for input " << inputNumber << ": ";
+        //     for (float value : v)
+        //     {
+        //         cout << value << ' ';
+        //     }
+        //     cout << '\n';
+        //     inputNumber++;
+        // }
 
         currentInputCount = neuronsCount;
     }
@@ -179,6 +179,11 @@ vector<vector<float>> NeuralNetwork::teachForSeries(int epoch, const vector<vect
             float errorForSerie = 0;
             vector<vector<float>> layersOutput;
             vector<float> prediction = predict(input[s], layersOutput);
+            // if (s == 0)
+            // {
+            //     cout << prediction[0];
+            //     break;
+            // }
             vector<float> delta;
             delta.resize(prediction.size());
 
@@ -196,7 +201,7 @@ vector<vector<float>> NeuralNetwork::teachForSeries(int epoch, const vector<vect
                 vector<float> currLayerDelta = multiply_matrix(transposedWeights, delta);
                 vector<float> layerOutputDeriv;
                 layerOutputDeriv.resize(layersOutput[l].size());
-                for (int i = 0; i < layerOutputDeriv.size(); i++)
+                for (size_t i = 0; i < layerOutputDeriv.size(); i++)
                 {
                     layerOutputDeriv[i] = reluDeriv(layersOutput[l][i]);
                 }
@@ -261,7 +266,7 @@ void NeuralNetwork::fit(const vector<float> &input, const vector<float> &expecte
         vector<float> currLayerDelta = multiply_matrix(transposedWeights, delta);
         vector<float> layerOutputDeriv;
         layerOutputDeriv.resize(layersOutput[l].size());
-        for (int i = 0; i < layerOutputDeriv.size(); i++)
+        for (size_t i = 0; i < layerOutputDeriv.size(); i++)
         {
             layerOutputDeriv[i] = reluDeriv(layersOutput[l][i]);
         }
@@ -348,7 +353,10 @@ float NeuralNetwork::neuron(const vector<float> &input, const vector<float> &wei
     for (int x = 0; x < inputSize; x++)
     {
         result += (input[x] * weights[x]);
+        // cout << input[x] << ' ' << weights[x] << '|';
     }
+
+    // cout << result << " ";
 
     if (activationFunctions[layerNum])
     {
@@ -461,9 +469,9 @@ vector<float> multiply_matrix(const vector<vector<float>> &weights, const vector
     vector<float> output;
     output.resize(weights.size());
 
-    for (int y = 0; y < weights.size(); y++)
+    for (size_t y = 0; y < weights.size(); y++)
     {
-        for (int x = 0; x < weights[y].size(); x++)
+        for (size_t x = 0; x < weights[y].size(); x++)
         {
             output[y] += weights[y][x] * delta[x];
         }
@@ -477,7 +485,7 @@ vector<float> multiply_matrix_deriv(const vector<float> &v1, const vector<float>
     vector<float> output;
     output.resize(v1.size());
 
-    for (int y = 0; y < v1.size(); y++)
+    for (size_t y = 0; y < v1.size(); y++)
     {
         output[y] = v1[y] * v2[y];
     }
