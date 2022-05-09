@@ -5,51 +5,51 @@
 int main()
 {
 
-    // NeuralNetwork network(3);
-    // vector<vector<float>> inputSeries = {
-    //     {0.5, 0.75, 0.1},
-    //     {0.1, 0.3, 0.7},
-    //     {0.2, 0.1, 0.6},
-    //     {0.8, 0.9, 0.2}
-    // };
+    NeuralNetwork network(3);
+    vector<vector<float>> inputSeries = {
+        {0.5, 0.75, 0.1},
+        {0.1, 0.3, 0.7},
+        {0.2, 0.1, 0.6},
+        {0.8, 0.9, 0.2}
+    };
 
-    // network.activationFunctions.push_back(relu);
-    // network.activationFunctions.push_back(NULL);
+    network.activationFunctions.push_back(relu);
+    network.activationFunctions.push_back(NULL);
 
-    // vector<vector<float>> expectedOutputSeries = {
-    //     {0.1, 1.0, 0.1},
-    //     {0.5, 0.2, -0.5},
-    //     {0.1, 0.3, 0.2},
-    //     {0.7, 0.6, 0.2}
-    // };
+    vector<vector<float>> expectedOutputSeries = {
+        {0.1, 1.0, 0.1},
+        {0.5, 0.2, -0.5},
+        {0.1, 0.3, 0.2},
+        {0.7, 0.6, 0.2}
+    };
 
-    // float alpha = 0.01;
+    float alpha = 0.01;
 
-    // string filename = "layers_example.json";
-    // network.loadWeights(PATH_TO_LAYERS + filename);
+    string filename = "layers_example.json";
+    network.loadWeights(PATH_TO_LAYERS + filename);
 
-    // cout << "\nLab 3.4\n";
+    cout << "\nLab 3.4\n";
 
-    // vector<vector<float>> layersOutput;
+    vector<vector<float>> layersOutput;
 
-    // for(vector<float> input : inputSeries) {
-    //     vector<float> output = network.predict(input, layersOutput);
-    //     for(float value : output) {
-    //         cout << value << '\n';
-    //     }
-    //     cout << '\n';
-    // }
+    for(vector<float> input : inputSeries) {
+        vector<float> output = network.predict(input, layersOutput);
+        for(float value : output) {
+            cout << value << '\n';
+        }
+        cout << '\n';
+    }
 
-    // cout << "\nLab 3.5\n";
+    cout << "\nLab 3.5\n";
 
-    // vector<vector<float>> outputSeries = network.teachForSeries(50, inputSeries, alpha, expectedOutputSeries);
+    vector<vector<float>> outputSeries = network.teachForSeries(50, inputSeries, alpha, expectedOutputSeries);
 
-    // for(vector<float> output : outputSeries) {
-    //     for(float value : output) {
-    //         cout << value << '\n';
-    //     }
-    //     cout << '\n';
-    // }
+    for(vector<float> output : outputSeries) {
+        for(float value : output) {
+            cout << value << '\n';
+        }
+        cout << '\n';
+    }
 
     cout << "\nLab 3.6\n";
 
@@ -176,6 +176,95 @@ int main()
 
     cout << "Correct: " << correct << " / 10000\n"
          << correct / 100.0 << "%\n";
+
+    // Zadanie 4
+    cout << "\nLab 3.7\n";
+
+    NeuralNetwork neuralColor(3);
+    neuralColor.addLayer(40);
+    neuralColor.addLayer(4);
+
+    neuralColor.activationFunctions.push_back(relu);
+    neuralColor.activationFunctions.push_back(relu);
+
+    vector<vector<float>> inputColors;
+    vector<vector<float>> expectedOutputColors;
+
+    fstream colorsFile;
+    colorsFile.open("../colors/training_colors.txt", ios::in);
+
+    string line;
+    while (getline(colorsFile, line))
+    {
+        vector<float> data;
+        size_t pos = 0;
+        string token;
+        while ((pos = line.find(" ")) != std::string::npos)
+        {
+            token = line.substr(0, pos);
+            // std::cout << token << std::endl;
+            data.push_back(stof(token));
+            line.erase(0, pos + 1);
+        }
+        inputColors.push_back(data);
+        vector<float> expectedData = {0, 0, 0, 0};
+        expectedData[stof(line) - 1] = 1;
+        expectedOutputColors.push_back(expectedData);
+    }
+
+    vector<vector<float>> inputColorsTest;
+    vector<float> expectedOutputColorsTest;
+
+    float percentage;
+
+    fstream colorsFileTest;
+    colorsFileTest.open("../colors/test_colors.txt", ios::in);
+
+    while (getline(colorsFileTest, line))
+    {
+        vector<float> data;
+        size_t pos = 0;
+        string token;
+        while ((pos = line.find(" ")) != std::string::npos)
+        {
+            token = line.substr(0, pos);
+            // std::cout << token << std::endl;
+            data.push_back(stof(token));
+            line.erase(0, pos + 1);
+        }
+        inputColorsTest.push_back(data);
+        expectedOutputColorsTest.push_back(stof(line));
+    }
+
+    vector<vector<float>> resultSeries;
+
+    resultSeries = neuralColor.teachForSeries(1, inputColors, 0.01, expectedOutputColors);
+
+    correct = 0;
+    for (int i = 0; i < (int)expectedOutputColorsTest.size(); i++)
+    {
+        vector<float> resultColor = neuralColor.predict(inputColorsTest[i], lo);
+        float max = resultColor[0];
+        int maxIndex = 0;
+        for (int m = 0; m < (int)resultColor.size(); m++)
+        {
+            if (resultColor[m] > max)
+            {
+                max = resultColor[m];
+                maxIndex = m;
+            }
+        }
+
+        if (maxIndex + 1 == expectedOutputColorsTest[i])
+        {
+            correct++;
+        }
+    }
+
+    cout << "Correct: " << correct;
+    cout << " / " << expectedOutputColorsTest.size() << "\n";
+    percentage = correct / (float)expectedOutputColorsTest.size();
+    cout << percentage * 100 << "%\n";
 
     return EXIT_SUCCESS;
 }
